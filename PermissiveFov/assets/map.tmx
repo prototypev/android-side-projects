@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="17" height="1" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Tileset" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="gfx/Tiles/Tileset_default.png" width="199" height="100"/>
+  <tile id="0">
+   <properties>
+    <property name="TileType" value="TILE_WALL_0*0*1011"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="TileType" value="TILE_WALL_***11111"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="TileType" value="TILE_WALL_0*01*110"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11111110"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11111011"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="TileType" value="TILE_WALL"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="TileType" value="TILE_WALL_*11*1*11"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11111111"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11*1*11*"/>
+   </properties>
+  </tile>
+  <tile id="9">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11011111"/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="TileType" value="TILE_WALL_01111111"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="TileType" value="TILE_DOOR"/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="TileType" value="TILE_WALL_011*10*0"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="TileType" value="TILE_WALL_11111***"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="TileType" value="TILE_WALL_1101*0*0"/>
+   </properties>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="TileType" value="TILE_EMPTY"/>
+   </properties>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="TileType" value="TILE_GRAVESTONE"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="TileType" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="17" height="1">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAAw3DARKAEBAAwJMKEfX/z9qd2RQRh9litfk6XZ5ePnZvP3+HGwo5lXZEAAAA
+  </data>
+ </layer>
+</map>
