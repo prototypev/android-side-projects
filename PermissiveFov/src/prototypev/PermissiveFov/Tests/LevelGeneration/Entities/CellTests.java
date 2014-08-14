@@ -19,6 +19,12 @@ public class CellTests {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
+    public void newCell_InvalidArguments_ExpectsException() {
+        exception.expect(IllegalArgumentException.class);
+        new Cell(-1, -1);
+    }
+
+    @Test
     public void isDeadEnd_OneSideEmpty_ExpectsTrue() {
         for (DirectionType direction : DirectionType.values()) {
             Cell cell = new Cell(0, 0);

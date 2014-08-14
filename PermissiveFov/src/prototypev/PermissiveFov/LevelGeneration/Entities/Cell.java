@@ -20,6 +20,10 @@ public class Cell {
      * @param y The vertical component.
      */
     public Cell(int x, int y) {
+        if (x < 0 || y < 0) {
+            throw new IllegalArgumentException("Invalid co-ordinates. x and y must be >= 0");
+        }
+
         this.x = x;
         this.y = y;
 
