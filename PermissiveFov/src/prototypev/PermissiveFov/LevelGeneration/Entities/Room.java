@@ -184,7 +184,7 @@ public class Room {
      * @return true if the specified co-ordinates is outside the bounds of this room; otherwise false.
      */
     public boolean isOutOfBounds(int x, int y) {
-        return x < left || y < top || y > top + height || x > left + width;
+        return x < left || y < top || y >= top + height || x >= left + width;
     }
 
     /**

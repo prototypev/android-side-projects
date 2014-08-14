@@ -27,6 +27,22 @@ public class RoomTests {
     }
 
     @Test
+    public void isOutOfBounds_CellInRoom_ExpectsFalse() {
+        Room room = Room.createFilledRoom(0, 0, 2, 2);
+
+        assertFalse("(0, 0) should be inside room!", room.isOutOfBounds(0, 0));
+        assertFalse("(1, 1) should be inside room!", room.isOutOfBounds(1, 1));
+    }
+
+    @Test
+    public void isOutOfBounds_CellOutsideRoom_ExpectsTrue() {
+        Room room = Room.createFilledRoom(1, 1, 2, 2);
+
+        assertTrue("(0, 0) should not be inside room!", room.isOutOfBounds(0, 0));
+        assertTrue("(3, 3) should not be inside room!", room.isOutOfBounds(3, 3));
+    }
+
+    @Test
     public void hasAdjacentCell_OutOfBounds_ExpectsException() {
         Room room = Room.createFilledRoom(0, 0, 1, 1);
 
