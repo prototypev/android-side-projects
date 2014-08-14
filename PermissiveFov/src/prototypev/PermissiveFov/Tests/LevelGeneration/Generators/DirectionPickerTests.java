@@ -19,7 +19,7 @@ public class DirectionPickerTests {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void GetNextDirection_ExhaustAllDirections_ExpectsException() {
+    public void getNextDirection_ExhaustAllDirections_ExpectsException() {
         DirectionPicker directionPicker = new DirectionPicker();
 
         exception.expect(IllegalStateException.class);
@@ -29,7 +29,7 @@ public class DirectionPickerTests {
     }
 
     @Test
-    public void GetNextDirection_DefaultCase_ExpectsCorrectValues() {
+    public void getNextDirection_DefaultCase_ExpectsCorrectValues() {
         DirectionPicker directionPicker = new DirectionPicker();
 
         Set<DirectionType> directionsPicked = new HashSet<DirectionType>();
@@ -45,7 +45,7 @@ public class DirectionPickerTests {
     }
 
     @Test
-    public void GetNextDirection_Randomness0_ExpectsSameDirectionInitially() {
+    public void getNextDirection_Randomness0_ExpectsSameDirectionInitially() {
         DirectionPicker directionPicker = new DirectionPicker(DirectionType.WEST, 0);
 
         // Ensure that the first direction picked is always the same as the previous direction
@@ -60,7 +60,7 @@ public class DirectionPickerTests {
     }
 
     @Test
-    public void GetNextDirection_Randomness100_ExpectsDifferentDirectionInitially() {
+    public void getNextDirection_Randomness100_ExpectsDifferentDirectionInitially() {
         DirectionPicker directionPicker = new DirectionPicker(DirectionType.WEST, 100);
 
         DirectionType nextDirection;

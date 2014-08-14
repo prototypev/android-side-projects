@@ -19,7 +19,7 @@ public class CellTests {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void IsDeadEnd_OneSideEmpty_ExpectsTrue() {
+    public void isDeadEnd_OneSideEmpty_ExpectsTrue() {
         for (DirectionType direction : DirectionType.values()) {
             Cell cell = new Cell(0, 0);
             cell.setSide(direction, SideType.EMPTY);
@@ -28,7 +28,7 @@ public class CellTests {
     }
 
     @Test
-    public void IsDeadEnd_NotOneSideEmpty_ExpectsFalse() {
+    public void isDeadEnd_NotOneSideEmpty_ExpectsFalse() {
         Cell cell = new Cell(0, 0);
         assertFalse("A brand new cell should not be a dead end!", cell.isDeadEnd());
 
@@ -44,7 +44,7 @@ public class CellTests {
     }
 
     @Test
-    public void GetDeadEndCorridorDirection_NonDeadEnd_ExpectsException() {
+    public void getDeadEndCorridorDirection_NonDeadEnd_ExpectsException() {
         Cell cell = new Cell(0, 0);
 
         exception.expect(IllegalStateException.class);
@@ -52,7 +52,7 @@ public class CellTests {
     }
 
     @Test
-    public void GetDeadEndCorridorDirection_DefaultCase_ExpectsCorrectValues() {
+    public void getDeadEndCorridorDirection_DefaultCase_ExpectsCorrectValues() {
         for (DirectionType direction : DirectionType.values()) {
             Cell cell = new Cell(0, 0);
             cell.setSide(direction, SideType.EMPTY);
