@@ -1,9 +1,9 @@
-package prototypev.PermissiveFov.prototypev.PermissiveFov.Scenes;
+package prototypev.PermissiveFov.Scenes;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.ui.activity.BaseGameActivity;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers.SplashResourceManager;
+import prototypev.PermissiveFov.ResourceManagers.SplashResourceManager;
 
 public class SplashScene extends SceneBase {
     public SplashScene(BaseGameActivity activity, SplashResourceManager resourceManager) {

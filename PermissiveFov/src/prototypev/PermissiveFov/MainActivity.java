@@ -8,10 +8,10 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers.GameResourceManager;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers.SplashResourceManager;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.Scenes.GameScene;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.Scenes.SplashScene;
+import prototypev.PermissiveFov.ResourceManagers.GameResourceManager;
+import prototypev.PermissiveFov.ResourceManagers.SplashResourceManager;
+import prototypev.PermissiveFov.Scenes.GameScene;
+import prototypev.PermissiveFov.Scenes.SplashScene;
 
 public class MainActivity extends BaseGameActivity {
     private static final int CAMERA_WIDTH = 800;

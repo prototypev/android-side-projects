@@ -1,4 +1,4 @@
-package prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers;
+package prototypev.PermissiveFov.ResourceManagers;
 
 import org.andengine.extension.tmx.TMXLoader;
 import org.andengine.extension.tmx.TMXTiledMap;

@@ -1,4 +1,4 @@
-package prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers;
+package prototypev.PermissiveFov.ResourceManagers;
 
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.TextureOptions;

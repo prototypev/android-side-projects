@@ -1,8 +1,8 @@
-package prototypev.PermissiveFov.prototypev.PermissiveFov.Scenes;
+package prototypev.PermissiveFov.Scenes;
 
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
-import prototypev.PermissiveFov.prototypev.PermissiveFov.ResourceManagers.IResourceManager;
+import prototypev.PermissiveFov.ResourceManagers.IResourceManager;
 
 public abstract class SceneBase extends Scene {
     protected final BaseGameActivity activity;
