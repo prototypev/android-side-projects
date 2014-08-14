@@ -266,4 +266,44 @@ public class Room {
 
         return adjacentCell;
     }
+
+    @Override
+    public String toString() {
+        int totalCharsPerRow = width * 3 + 1;
+
+        StringBuilder stringBuilder = new StringBuilder(height * totalCharsPerRow);
+
+        for (int y = 0; y < height; y++) {
+            StringBuilder rowStringBuilder1 = new StringBuilder(totalCharsPerRow);
+            StringBuilder rowStringBuilder2 = new StringBuilder(totalCharsPerRow);
+            StringBuilder rowStringBuilder3 = new StringBuilder(totalCharsPerRow);
+
+            for (int x = 0; x < width; x++) {
+                Cell cell = getCellAt(x, y);
+
+                SideType northSide = cell.getSide(DirectionType.NORTH);
+                SideType westSide = cell.getSide(DirectionType.WEST);
+                SideType southSide = cell.getSide(DirectionType.SOUTH);
+                SideType eastSide = cell.getSide(DirectionType.EAST);
+
+                rowStringBuilder1.append(northSide == SideType.EMPTY && westSide == SideType.EMPTY ? SideType.EMPTY : SideType.WALL)
+                        .append(northSide)
+                        .append(northSide == SideType.EMPTY && eastSide == SideType.EMPTY ? SideType.EMPTY : SideType.WALL);
+
+                rowStringBuilder2.append(westSide)
+                        .append(cell.getWallCount() == DirectionType.size ? SideType.WALL : '.')
+                        .append(eastSide);
+
+                rowStringBuilder3.append(southSide == SideType.EMPTY && westSide == SideType.EMPTY ? SideType.EMPTY : SideType.WALL)
+                        .append(southSide)
+                        .append(southSide == SideType.EMPTY && eastSide == SideType.EMPTY ? SideType.EMPTY : SideType.WALL);
+            }
+
+            stringBuilder.append(rowStringBuilder1).append(System.getProperty("line.separator"))
+                    .append(rowStringBuilder2).append(System.getProperty("line.separator"))
+                    .append(rowStringBuilder3).append(System.getProperty("line.separator"));
+        }
+
+        return stringBuilder.toString();
+    }
 }
