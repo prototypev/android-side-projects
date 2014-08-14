@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
-    public final int top;
-    public final int left;
     public final int width;
     public final int height;
 
@@ -28,8 +26,6 @@ public class Room {
             throw new IllegalArgumentException("Invalid bounds specified. top and left must be >= 0. width and height must be > 0");
         }
 
-        this.top = top;
-        this.left = left;
         this.width = width;
         this.height = height;
 
@@ -64,17 +60,16 @@ public class Room {
      * @return The room.
      */
     public static Room createWalledInRoom(int top, int left, int width, int height) {
-        Room room = createFilledRoom(top, left, width, height);
+        Room room = createEmptyRoom(top, left, width, height);
 
         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Cell cell = room.getCellAt(x, y);
+            room.cells[y][0].setSide(DirectionType.WEST, SideType.WALL);
+            room.cells[y][width - 1].setSide(DirectionType.EAST, SideType.WALL);
+        }
 
-                cell.setSide(DirectionType.NORTH, y == 0 ? SideType.WALL : SideType.EMPTY);
-                cell.setSide(DirectionType.WEST, x == 0 ? SideType.WALL : SideType.EMPTY);
-                cell.setSide(DirectionType.SOUTH, y == height - 1 ? SideType.WALL : SideType.EMPTY);
-                cell.setSide(DirectionType.EAST, x == width - 1 ? SideType.WALL : SideType.EMPTY);
-            }
+        for (int x = 0; x < width; x++) {
+            room.cells[0][x].setSide(DirectionType.NORTH, SideType.WALL);
+            room.cells[height - 1][x].setSide(DirectionType.SOUTH, SideType.WALL);
         }
 
         return room;
@@ -92,10 +87,8 @@ public class Room {
     public static Room createEmptyRoom(int top, int left, int width, int height) {
         Room room = createFilledRoom(top, left, width, height);
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Cell cell = room.getCellAt(x, y);
-
+        for (Cell[] row : room.cells) {
+            for (Cell cell : row) {
                 for (DirectionType direction : DirectionType.values()) {
                     cell.setSide(direction, SideType.EMPTY);
                 }
@@ -103,6 +96,43 @@ public class Room {
         }
 
         return room;
+    }
+
+    /**
+     * @return The top bounds.
+     */
+    public int getTop() {
+        return cells[0][0].getY();
+    }
+
+    /**
+     * @return The left bounds.
+     */
+    public int getLeft() {
+        return cells[0][0].getX();
+    }
+
+    /**
+     * Moves the room to the specified co-ordinates.
+     *
+     * @param x The horizontal component.
+     * @param y The vertical component.
+     */
+    public void moveTo(int x, int y) {
+        int deltaX = x - getLeft();
+        int deltaY = y - getTop();
+
+        if (deltaX != 0 || deltaY != 0) {
+            for (Cell[] row : cells) {
+                for (Cell cell : row) {
+                    int newX = cell.getX() + deltaX;
+                    cell.setX(newX);
+
+                    int newY = cell.getY() + deltaY;
+                    cell.setY(newY);
+                }
+            }
+        }
     }
 
     /**
@@ -162,7 +192,7 @@ public class Room {
         int x = Randomizer.getInstance().nextInt(width);
         int y = Randomizer.getInstance().nextInt(height);
 
-        return getCellAt(x, y);
+        return cells[y][x];
     }
 
     /**
@@ -175,7 +205,10 @@ public class Room {
             throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
         }
 
-        return cells[y][x];
+        int left = getLeft();
+        int top = getTop();
+
+        return cells[y - top][x - left];
     }
 
     /**
@@ -184,6 +217,9 @@ public class Room {
      * @return true if the specified co-ordinates is outside the bounds of this room; otherwise false.
      */
     public boolean isOutOfBounds(int x, int y) {
+        int left = getLeft();
+        int top = getTop();
+
         return x < left || y < top || y >= top + height || x >= left + width;
     }
 
@@ -198,18 +234,21 @@ public class Room {
             throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
         }
 
+        int left = getLeft();
+        int top = getTop();
+
         switch (direction) {
             case NORTH:
-                return y > 0;
+                return y > top;
 
             case WEST:
-                return x > 0;
+                return x > left;
 
             case SOUTH:
-                return y < height - 1;
+                return y < top + height - 1;
 
             case EAST:
-                return x < width - 1;
+                return x < left + width - 1;
 
             default:
                 // This should not happen
@@ -271,16 +310,21 @@ public class Room {
     public String toString() {
         int totalCharsPerRow = width * 3 + 1;
 
-        StringBuilder stringBuilder = new StringBuilder(height * totalCharsPerRow);
+        String lineSeparator = System.getProperty("line.separator");
 
-        for (int y = 0; y < height; y++) {
+        StringBuilder stringBuilder = new StringBuilder("Origin = (")
+                .append(getLeft())
+                .append(", ")
+                .append(getTop())
+                .append(')')
+                .append(lineSeparator);
+
+        for (Cell[] row : cells) {
             StringBuilder rowStringBuilder1 = new StringBuilder(totalCharsPerRow);
             StringBuilder rowStringBuilder2 = new StringBuilder(totalCharsPerRow);
             StringBuilder rowStringBuilder3 = new StringBuilder(totalCharsPerRow);
 
-            for (int x = 0; x < width; x++) {
-                Cell cell = getCellAt(x, y);
-
+            for (Cell cell : row) {
                 SideType northSide = cell.getSide(DirectionType.NORTH);
                 SideType westSide = cell.getSide(DirectionType.WEST);
                 SideType southSide = cell.getSide(DirectionType.SOUTH);
@@ -299,9 +343,9 @@ public class Room {
                         .append(southSide == SideType.EMPTY && eastSide == SideType.EMPTY ? SideType.EMPTY : SideType.WALL);
             }
 
-            stringBuilder.append(rowStringBuilder1).append(System.getProperty("line.separator"))
-                    .append(rowStringBuilder2).append(System.getProperty("line.separator"))
-                    .append(rowStringBuilder3).append(System.getProperty("line.separator"));
+            stringBuilder.append(rowStringBuilder1).append(lineSeparator)
+                    .append(rowStringBuilder2).append(lineSeparator)
+                    .append(rowStringBuilder3).append(lineSeparator);
         }
 
         return stringBuilder.toString();

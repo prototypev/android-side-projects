@@ -1,5 +1,6 @@
 package prototypev.PermissiveFov.Tests.LevelGeneration.Generators;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -9,6 +10,7 @@ import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Cell;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Room;
 import prototypev.PermissiveFov.LevelGeneration.Generators.MazeGenerator;
+import prototypev.PermissiveFov.Randomizer;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -19,6 +21,15 @@ import static org.junit.Assert.*;
 public class MazeGeneratorTests {
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    private int top;
+    private int left;
+
+    @Before
+    public void testSetup() {
+        top = Randomizer.getInstance().nextInt(2, 10);
+        left = Randomizer.getInstance().nextInt(2, 10);
+    }
 
     @Test
     public void newMazeGenerator_InvalidArguments_ExpectsException() {
@@ -35,7 +46,7 @@ public class MazeGeneratorTests {
 
             for (int y = 0; y < room.height; y++) {
                 for (int x = 0; x < room.width; x++) {
-                    Cell cell = room.getCellAt(x, y);
+                    Cell cell = room.getCellAt(left + x, top + y);
 
                     if (cell.getWallCount() == DirectionType.size) {
                         currentRockCellCount++;
@@ -52,7 +63,7 @@ public class MazeGeneratorTests {
     public void removeDeadEnds_WithMaxModifier_ExpectsAllDeadEndsRemoved() {
         MazeGenerator generator = new MazeGenerator(30, 70);
 
-        Room room = generator.generate(0, 0, 15, 15);
+        Room room = generator.generate(top, left, 15, 15);
         assertTrue("All cells should be visited after generating the maze!", room.isAllCellsVisited());
 
         List<Cell> deadEndCells = room.getDeadEndCells();
@@ -74,7 +85,7 @@ public class MazeGeneratorTests {
     private Room generateRoom(int randomness, int sparseness) {
         MazeGenerator generator = new MazeGenerator(randomness, sparseness);
 
-        Room room = generator.generate(0, 0, 15, 15);
+        Room room = generator.generate(top, left, 15, 15);
         assertTrue("All cells should be visited after generating the maze!", room.isAllCellsVisited());
 
         System.out.print("randomness=");

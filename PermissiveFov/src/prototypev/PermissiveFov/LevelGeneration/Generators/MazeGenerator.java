@@ -72,12 +72,12 @@ public class MazeGenerator {
                     directionPicker.reset(direction);
                     direction = directionPicker.getNextDirection();
 
-                    while (!room.hasAdjacentCell(currentCell.x, currentCell.y, direction)) {
+                    while (!room.hasAdjacentCell(currentCell.getX(), currentCell.getY(), direction)) {
                         direction = directionPicker.getNextDirection();
                     }
 
                     // Create a corridor in the selected direction
-                    currentCell = room.setCellSide(currentCell.x, currentCell.y, direction, SideType.EMPTY);
+                    currentCell = room.setCellSide(currentCell.getX(), currentCell.getY(), direction, SideType.EMPTY);
                 } while (currentCell.isDeadEnd()); // Stop when intersecting an existing corridor.
             }
         }
@@ -103,14 +103,14 @@ public class MazeGenerator {
 
             // If there is no cell adjacent to the current cell in that direction,
             // or if the adjacent cell in that direction has been visited
-            while (!room.hasAdjacentCell(currentCell.x, currentCell.y, direction) ||
-                    room.getAdjacentCell(currentCell.x, currentCell.y, direction).isVisited()) {
+            while (!room.hasAdjacentCell(currentCell.getX(), currentCell.getY(), direction) ||
+                    room.getAdjacentCell(currentCell.getX(), currentCell.getY(), direction).isVisited()) {
                 // Then the current direction is invalid, and we must pick a different random direction.
                 if (directionPicker.hasNextDirection()) {
                     direction = directionPicker.getNextDirection();
                 } else {
                     // If all directions are invalid, pick a different random previously visited cell
-                    currentCell = getRandomVisitedCellExcluding(room, currentCell.x, currentCell.y);
+                    currentCell = getRandomVisitedCellExcluding(room, currentCell.getX(), currentCell.getY());
 
                     directionPicker.reset(previousDirection);
                     direction = directionPicker.getNextDirection();
@@ -119,7 +119,7 @@ public class MazeGenerator {
 
             // Create a corridor from the current cell in the chosen direction,
             // and make the adjacent cell the current cell
-            currentCell = room.setCellSide(currentCell.x, currentCell.y, direction, SideType.EMPTY);
+            currentCell = room.setCellSide(currentCell.getX(), currentCell.getY(), direction, SideType.EMPTY);
 
             // Mark the adjacent cell as visited
             currentCell.setVisited(true);
@@ -157,7 +157,7 @@ public class MazeGenerator {
 
             // If it is the last dead end in the current iteration, check to make sure that this last cell is a dead end
             if (iterator.hasNext() || cell.isDeadEnd()) {
-                room.setCellSide(cell.x, cell.y, cell.getDeadEndCorridorDirection(), SideType.WALL);
+                room.setCellSide(cell.getX(), cell.getY(), cell.getDeadEndCorridorDirection(), SideType.WALL);
             }
         }
     }
@@ -174,7 +174,7 @@ public class MazeGenerator {
         }
 
         List<Cell> visitedCells = room.getVisitedCells();
-        if (visitedCells.size() == 0) {
+        if (visitedCells.isEmpty()) {
             throw new IllegalStateException("There are no visited cells to return.");
         }
 
@@ -182,7 +182,7 @@ public class MazeGenerator {
         Iterator<Cell> iterator = visitedCells.iterator();
         while (iterator.hasNext()) {
             Cell cell = iterator.next();
-            if (cell.x == x && cell.y == y) {
+            if (cell.getX() == x && cell.getY() == y) {
                 iterator.remove();
                 break;
             }

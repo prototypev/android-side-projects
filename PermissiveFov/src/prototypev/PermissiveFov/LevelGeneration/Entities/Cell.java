@@ -7,10 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cell {
-    public final int x;
-    public final int y;
     private final Map<DirectionType, SideType> sides = new HashMap<DirectionType, SideType>();
-
+    private int x;
+    private int y;
     private boolean isVisited;
 
     /**
@@ -32,6 +31,45 @@ public class Cell {
         sides.put(DirectionType.WEST, SideType.WALL);
         sides.put(DirectionType.SOUTH, SideType.WALL);
         sides.put(DirectionType.EAST, SideType.WALL);
+    }
+
+    /**
+     * Creates a new Cell at (0, 0)
+     */
+    public Cell() {
+        this(0, 0);
+    }
+
+    /**
+     * @return The horizontal component.
+     */
+    public int getX() {
+        return x;
+    }
+
+    /**
+     * Sets the horizontal component.
+     *
+     * @param x The value.
+     */
+    void setX(int x) {
+        this.x = x;
+    }
+
+    /**
+     * @return The vertical component.
+     */
+    public int getY() {
+        return y;
+    }
+
+    /**
+     * Sets the vertical component.
+     *
+     * @param y The value.
+     */
+    void setY(int y) {
+        this.y = y;
     }
 
     /**
