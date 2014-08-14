@@ -78,6 +78,14 @@ public class Cell {
     }
 
     /**
+     * @param direction The direction of the side to get.
+     * @return The type of the side in the specified direction.
+     */
+    public SideType getSide(DirectionType direction) {
+        return sides.get(direction);
+    }
+
+    /**
      * Sets the side type in the specified direction.
      *
      * @param direction The direction of the side to set.
@@ -87,10 +95,18 @@ public class Cell {
         sides.put(direction, sideType);
     }
 
+    /**
+     * @return true if this cell has been visited; otherwise false.
+     */
     public boolean isVisited() {
         return isVisited;
     }
 
+    /**
+     * Indicates whether this cell is visited or not.
+     *
+     * @param isVisited A value indicating if this cell is visited.
+     */
     public void setVisited(boolean isVisited) {
         this.isVisited = isVisited;
     }
