@@ -38,6 +38,12 @@ public class RoomTests {
     }
 
     @Test
+    public void newRoom_ExpectsAllCellsNotVisited() {
+        Room room = Room.createFilledRoom(top, left, 3, 3);
+        assertTrue("No cell should be visited when creating a new room!", room.getVisitedCells().isEmpty());
+    }
+
+    @Test
     public void isOutOfBounds_CellInRoom_ExpectsFalse() {
         Room room = Room.createFilledRoom(top, left, 2, 2);
 
