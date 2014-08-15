@@ -2,7 +2,6 @@ package prototypev.PermissiveFov.LevelGeneration.Entities;
 
 import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.SideType;
-import prototypev.PermissiveFov.Randomizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,16 +182,6 @@ public class Room {
         }
 
         return deadEndCells;
-    }
-
-    /**
-     * @return A cell at random.
-     */
-    public Cell getRandomCell() {
-        int x = Randomizer.getInstance().nextInt(width);
-        int y = Randomizer.getInstance().nextInt(height);
-
-        return cells[y][x];
     }
 
     /**

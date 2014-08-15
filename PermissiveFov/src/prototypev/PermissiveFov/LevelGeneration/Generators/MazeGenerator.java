@@ -90,7 +90,7 @@ public class MazeGenerator {
      */
     private void createDenseMaze(Room room) {
         // Pick a random cell in the grid and mark it visited.
-        Cell currentCell = room.getRandomCell();
+        Cell currentCell = getRandomCell(room);
         currentCell.setVisited(true);
 
         DirectionType previousDirection = DirectionType.NORTH;
@@ -127,6 +127,17 @@ public class MazeGenerator {
             previousDirection = direction;
             directionPicker.reset(previousDirection);
         }
+    }
+
+    /**
+     * @param room The room to choose from.
+     * @return A random cell from the room.
+     */
+    private Cell getRandomCell(Room room) {
+        int x = Randomizer.getInstance().nextInt(room.getLeft(), room.getLeft() + room.width - 1);
+        int y = Randomizer.getInstance().nextInt(room.getTop(), room.getTop() + room.height - 1);
+
+        return room.getCellAt(x, y);
     }
 
     /**
