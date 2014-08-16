@@ -1,23 +1,16 @@
 package prototypev.PermissiveFov.Tests.LevelGeneration.Entities;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Cell;
 import prototypev.PermissiveFov.LevelGeneration.SideType;
+import prototypev.PermissiveFov.Tests.TestBase;
 
 import java.text.MessageFormat;
 
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-public class CellTests {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
+public class CellTests extends TestBase {
     @Test
     public void newCell_InvalidArguments_ExpectsException() {
         exception.expect(IllegalArgumentException.class);

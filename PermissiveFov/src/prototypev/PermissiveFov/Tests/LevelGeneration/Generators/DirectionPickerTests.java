@@ -1,23 +1,16 @@
 package prototypev.PermissiveFov.Tests.LevelGeneration.Generators;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.Generators.DirectionPicker;
+import prototypev.PermissiveFov.Tests.TestBase;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-public class DirectionPickerTests {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
+public class DirectionPickerTests extends TestBase {
     @Test
     public void getNextDirection_ExhaustAllDirections_ExpectsException() {
         DirectionPicker directionPicker = new DirectionPicker();

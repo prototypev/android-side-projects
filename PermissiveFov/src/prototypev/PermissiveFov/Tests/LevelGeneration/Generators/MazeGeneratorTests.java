@@ -1,27 +1,20 @@
 package prototypev.PermissiveFov.Tests.LevelGeneration.Generators;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Cell;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Room;
 import prototypev.PermissiveFov.LevelGeneration.Generators.MazeGenerator;
 import prototypev.PermissiveFov.Randomizer;
+import prototypev.PermissiveFov.Tests.TestBase;
 
 import java.text.MessageFormat;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-public class MazeGeneratorTests {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
+public class MazeGeneratorTests extends TestBase {
     private int top;
     private int left;
 
