@@ -4,13 +4,15 @@ import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.SideType;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Room {
     public final int width;
     public final int height;
 
-    private final Cell[][] cells;
+    private final List<Cell> cells;
+    private final List<Room> rooms = new LinkedList<Room>();
 
     /**
      * Creates a new Room with the specified bounds.
@@ -28,10 +30,10 @@ public class Room {
         this.width = width;
         this.height = height;
 
-        cells = new Cell[height][width];
+        cells = new ArrayList<Cell>(height * width);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                cells[y][x] = new Cell(left + x, top + y);
+                cells.add(new Cell(left + x, top + y));
             }
         }
     }
@@ -61,14 +63,17 @@ public class Room {
     public static Room createWalledInRoom(int top, int left, int width, int height) {
         Room room = createEmptyRoom(top, left, width, height);
 
-        for (int y = 0; y < height; y++) {
-            room.cells[y][0].setSide(DirectionType.WEST, SideType.WALL);
-            room.cells[y][width - 1].setSide(DirectionType.EAST, SideType.WALL);
+        int right = left + width;
+        int bottom = top + height;
+
+        for (int y = top; y < bottom; y++) {
+            room.setCellSide(left, y, DirectionType.WEST, SideType.WALL);
+            room.setCellSide(right - 1, y, DirectionType.EAST, SideType.WALL);
         }
 
-        for (int x = 0; x < width; x++) {
-            room.cells[0][x].setSide(DirectionType.NORTH, SideType.WALL);
-            room.cells[height - 1][x].setSide(DirectionType.SOUTH, SideType.WALL);
+        for (int x = left; x < right; x++) {
+            room.setCellSide(x, top, DirectionType.NORTH, SideType.WALL);
+            room.setCellSide(x, bottom - 1, DirectionType.SOUTH, SideType.WALL);
         }
 
         return room;
@@ -86,11 +91,9 @@ public class Room {
     public static Room createEmptyRoom(int top, int left, int width, int height) {
         Room room = createFilledRoom(top, left, width, height);
 
-        for (Cell[] row : room.cells) {
-            for (Cell cell : row) {
-                for (DirectionType direction : DirectionType.values()) {
-                    cell.setSide(direction, SideType.EMPTY);
-                }
+        for (Cell cell : room.cells) {
+            for (DirectionType direction : DirectionType.values()) {
+                cell.setSide(direction, SideType.EMPTY);
             }
         }
 
@@ -101,14 +104,14 @@ public class Room {
      * @return The top bounds.
      */
     public int getTop() {
-        return cells[0][0].getY();
+        return cells.get(0).getY();
     }
 
     /**
      * @return The left bounds.
      */
     public int getLeft() {
-        return cells[0][0].getX();
+        return cells.get(0).getX();
     }
 
     /**
@@ -122,16 +125,76 @@ public class Room {
         int deltaY = y - getTop();
 
         if (deltaX != 0 || deltaY != 0) {
-            for (Cell[] row : cells) {
-                for (Cell cell : row) {
-                    int newX = cell.getX() + deltaX;
-                    cell.setX(newX);
+            for (Cell cell : cells) {
+                int newX = cell.getX() + deltaX;
+                cell.setX(newX);
 
-                    int newY = cell.getY() + deltaY;
-                    cell.setY(newY);
-                }
+                int newY = cell.getY() + deltaY;
+                cell.setY(newY);
             }
         }
+    }
+
+    /**
+     * @return The list of all cells in this room.
+     */
+    public Iterable<Cell> getCells() {
+        return cells;
+    }
+
+    /**
+     * @return The inner rooms that are contained within this room.
+     */
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    /**
+     * Adds a room at the specified co-ordinates.
+     *
+     * @param room The room to add.
+     * @param x    The horizontal component.
+     * @param y    The vertical component.
+     */
+    public void addRoom(Room room, int x, int y) {
+        // Check if the room at the given point will fit inside the bounds of the container
+        if (getLeft() > x ||
+                getTop() > y ||
+                getLeft() + width < x + room.width ||
+                getTop() + height < y + room.height) {
+            // Room does not fit inside container
+            throw new IllegalArgumentException(String.format("Room at (%d, %d) will not fit!", x, y));
+        }
+
+        // Offset the room origin to the new location
+        room.moveTo(x, y);
+
+        for (Cell cell : room.cells) {
+            int cellX = cell.getX();
+            int cellY = cell.getY();
+
+            // Set the room's cell to be the same as the container's cell
+            replaceCellAt(cell, cellX, cellY);
+
+            // Create room walls on map
+            if (cellY == y && hasAdjacentCell(cell, DirectionType.NORTH)) {
+                setCellSide(cell, DirectionType.NORTH, SideType.WALL);
+            }
+
+            if (cellX == x && hasAdjacentCell(cell, DirectionType.WEST)) {
+                setCellSide(cell, DirectionType.WEST, SideType.WALL);
+            }
+
+            if (cellY == y + room.height - 1 && hasAdjacentCell(cell, DirectionType.SOUTH)) {
+                setCellSide(cell, DirectionType.SOUTH, SideType.WALL);
+            }
+
+            if (cellX == x + room.width - 1 && hasAdjacentCell(cell, DirectionType.EAST)) {
+                setCellSide(cell, DirectionType.EAST, SideType.WALL);
+            }
+        }
+
+        rooms.add(room);
     }
 
     /**
@@ -140,11 +203,9 @@ public class Room {
     public List<Cell> getVisitedCells() {
         List<Cell> visitedCells = new ArrayList<Cell>();
 
-        for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                if (cell.isVisited()) {
-                    visitedCells.add(cell);
-                }
+        for (Cell cell : cells) {
+            if (cell.isVisited()) {
+                visitedCells.add(cell);
             }
         }
 
@@ -155,15 +216,29 @@ public class Room {
      * @return true if all cells in this room have been visited; otherwise false.
      */
     public boolean isAllCellsVisited() {
-        for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                if (!cell.isVisited()) {
-                    return false;
-                }
+        for (Cell cell : cells) {
+            if (!cell.isVisited()) {
+                return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * @return The list of cells that are corridors.
+     * A corridor is defined as a cell with at least 1 side empty.
+     */
+    public List<Cell> getCorridorCells() {
+        List<Cell> corridorCells = new ArrayList<Cell>();
+
+        for (Cell cell : cells) {
+            if (cell.isCorridor()) {
+                corridorCells.add(cell);
+            }
+        }
+
+        return corridorCells;
     }
 
     /**
@@ -173,11 +248,9 @@ public class Room {
     public List<Cell> getDeadEndCells() {
         List<Cell> deadEndCells = new ArrayList<Cell>();
 
-        for (Cell[] row : cells) {
-            for (Cell cell : row) {
-                if (cell.isDeadEnd()) {
-                    deadEndCells.add(cell);
-                }
+        for (Cell cell : cells) {
+            if (cell.isDeadEnd()) {
+                deadEndCells.add(cell);
             }
         }
 
@@ -196,8 +269,25 @@ public class Room {
 
         int left = getLeft();
         int top = getTop();
+        int index = (y - top) * width + x - left;
+        return cells.get(index);
+    }
 
-        return cells[y - top][x - left];
+    /**
+     * @param cell The new cell replacing the old cell.
+     * @param x    The horizontal component.
+     * @param y    The vertical component.
+     */
+    private void replaceCellAt(Cell cell, int x, int y) {
+        if (isOutOfBounds(x, y)) {
+            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
+        }
+
+        int left = getLeft();
+        int top = getTop();
+        int index = (y - top) * width + x - left;
+
+        cells.set(index, cell);
     }
 
     /**
@@ -246,6 +336,15 @@ public class Room {
     }
 
     /**
+     * @param cell      The cell to check.
+     * @param direction The direction to check.
+     * @return true if there is an adjacent cell in the specified direction from the specified cell; otherwise false.
+     */
+    public boolean hasAdjacentCell(Cell cell, DirectionType direction) {
+        return hasAdjacentCell(cell.getX(), cell.getY(), direction);
+    }
+
+    /**
      * @param x         The horizontal component.
      * @param y         The vertical component.
      * @param direction The direction to check.
@@ -277,22 +376,68 @@ public class Room {
     }
 
     /**
+     * @param cell The cell to check.
+     * @return The cell adjacent from the specified cell in the specified direction.
+     * If no adjacent cells are available, returns null.
+     */
+    public Cell getAdjacentCell(Cell cell, DirectionType direction) {
+        return getAdjacentCell(cell.getX(), cell.getY(), direction);
+    }
+
+    /**
+     * @param x         The horizontal component.
+     * @param y         The vertical component.
+     * @param direction The direction to check.
+     * @return true if the adjacent cell is a corridor; otherwise false.
+     * A corridor is defined as a cell with at least 1 side empty.
+     */
+    public boolean isAdjacentCellCorridor(int x, int y, DirectionType direction) {
+        if (!hasAdjacentCell(x, y, direction)) {
+            // If there is no adjacent cell in the given direction, then just return false
+            return false;
+        }
+
+        Cell adjacentCell = getAdjacentCell(x, y, direction);
+        return adjacentCell.isCorridor();
+    }
+
+    /**
+     * @param cell      The cell to check.
+     * @param direction The direction to check.
+     * @return true if the adjacent cell is a corridor; otherwise false.
+     * A corridor is defined as a cell with at least 1 side empty.
+     */
+    public boolean isAdjacentCellCorridor(Cell cell, DirectionType direction) {
+        return isAdjacentCellCorridor(cell.getX(), cell.getY(), direction);
+    }
+
+    /**
      * Sets the side of the specified cell.
      *
      * @param x         The horizontal component.
      * @param y         The vertical component.
      * @param direction The direction to set.
      * @param sideType  The side type to set.
-     * @return The adjacent cell in the specified direction.
      */
-    public Cell setCellSide(int x, int y, DirectionType direction, SideType sideType) {
+    public void setCellSide(int x, int y, DirectionType direction, SideType sideType) {
         Cell cell = getCellAt(x, y);
         cell.setSide(direction, sideType);
 
-        Cell adjacentCell = getAdjacentCell(x, y, direction);
-        adjacentCell.setSide(direction.getOpposite(), sideType);
+        if (hasAdjacentCell(cell, direction)) {
+            Cell adjacentCell = getAdjacentCell(cell, direction);
+            adjacentCell.setSide(direction.getOpposite(), sideType);
+        }
+    }
 
-        return adjacentCell;
+    /**
+     * Sets the side of the specified cell.
+     *
+     * @param cell      The cell.
+     * @param direction The direction to set.
+     * @param sideType  The side type to set.
+     */
+    public void setCellSide(Cell cell, DirectionType direction, SideType sideType) {
+        setCellSide(cell.getX(), cell.getY(), direction, sideType);
     }
 
     @Override
@@ -308,12 +453,15 @@ public class Room {
                 .append(')')
                 .append(lineSeparator);
 
-        for (Cell[] row : cells) {
+        for (int y = 0; y < height; y++) {
             StringBuilder rowStringBuilder1 = new StringBuilder(totalCharsPerRow);
             StringBuilder rowStringBuilder2 = new StringBuilder(totalCharsPerRow);
             StringBuilder rowStringBuilder3 = new StringBuilder(totalCharsPerRow);
 
-            for (Cell cell : row) {
+            for (int x = 0; x < width; x++) {
+                int index = y * width + x;
+                Cell cell = cells.get(index);
+
                 SideType northSide = cell.getSide(DirectionType.NORTH);
                 SideType westSide = cell.getSide(DirectionType.WEST);
                 SideType southSide = cell.getSide(DirectionType.SOUTH);

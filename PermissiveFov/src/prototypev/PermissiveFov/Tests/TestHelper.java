@@ -34,4 +34,40 @@ public class TestHelper {
             assertEquals(String.format("%s side of (%d, %d) should be %s!", direction.getName(), x, y, expectedSide.getName()), expectedSide, actualSide);
         }
     }
+
+    /**
+     * Creates a corridor in all directions in the specified room at the specified co-ordinates.
+     *
+     * @param room The room.
+     * @param x    The horizontal component.
+     * @param y    The vertical component.
+     */
+    public static void createCorridorInAllDirections(Room room, int x, int y) {
+        for (DirectionType direction : DirectionType.values()) {
+            room.setCellSide(x, y, direction, SideType.EMPTY);
+        }
+
+        /*
+         * Legend:
+         * X - SIDE_WALL
+         * O - SIDE_EMPTY
+         * . - Centre of cell
+         *
+         * Test grid after corridors are made should look like this:
+         *
+         *		 x-1  x  x+1
+         *     --------------
+         *	   |  X   X   X
+         * y-1 | X.X X.X X.X
+         *     |  X   O   X
+         *     |
+         *	   |  X   O   X
+         *	y  | X.O O.O O.X
+         *	   |  X   O   X
+         *     |
+         *	   |  X   O   X
+         * y+1 | X.X X.X X.X
+         *	   |  X   X   X
+         */
+    }
 }

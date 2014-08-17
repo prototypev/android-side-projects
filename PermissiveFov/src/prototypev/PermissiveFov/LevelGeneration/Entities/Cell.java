@@ -73,8 +73,20 @@ public class Cell {
     }
 
     /**
-     * @return true if a cell is a dead-end; otherwise false.
-     * Cells with 3 wall sides will be dead-end cells.
+     * @return true if the cell is a corridor; otherwise false. A corridor is defined as a cell with at least 1 side empty.
+     */
+    public boolean isCorridor() {
+        for (Map.Entry<DirectionType, SideType> entry : sides.entrySet()) {
+            if (entry.getValue() == SideType.EMPTY) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return true if a cell is a dead-end; otherwise false. Cells with 3 wall sides will be dead-end cells.
      */
     public boolean isDeadEnd() {
         return getWallCount() == 3;

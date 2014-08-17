@@ -3,16 +3,17 @@ package prototypev.PermissiveFov.Tests.LevelGeneration.Entities;
 import org.junit.Before;
 import org.junit.Test;
 import prototypev.PermissiveFov.LevelGeneration.DirectionType;
+import prototypev.PermissiveFov.LevelGeneration.Entities.Cell;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Room;
 import prototypev.PermissiveFov.LevelGeneration.SideType;
 import prototypev.PermissiveFov.Randomizer;
 import prototypev.PermissiveFov.Tests.TestBase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static prototypev.PermissiveFov.Tests.TestHelper.assertSides;
 
 public class RoomTests extends TestBase {
@@ -436,5 +437,43 @@ public class RoomTests extends TestBase {
 
         expectedSides.put(DirectionType.WEST, SideType.WALL);
         assertSides(room, left + 2, top + 1, expectedSides);
+    }
+
+    @Test
+    public void addRoom_DoesNotFit_ExpectsException() {
+        Room container = Room.createFilledRoom(top, left, 3, 3);
+        Room room = Room.createWalledInRoom(0, 0, 4, 4);
+
+        exception.expect(IllegalArgumentException.class);
+        container.addRoom(room, left, top);
+    }
+
+    @Test
+    public void addRoom_NormalCase_ExpectsCorrectLayout() {
+        Room container = Room.createFilledRoom(top, left, 3, 3);
+        Room room = Room.createWalledInRoom(0, 0, 2, 2);
+
+        int x = left + 1;
+        int y = top + 1;
+        container.addRoom(room, x, y);
+
+        assertEquals(String.format("Room should be displaced horizontally to %d!", x), x, room.getLeft());
+        assertEquals(String.format("Room should be displaced vertically to %d!", y), y, room.getTop());
+        assertEquals("Room's size should not have been changed!", 2, room.width);
+        assertEquals("Room's size should not have been changed!", 2, room.height);
+
+        List<Room> rooms = container.getRooms();
+        assertEquals("The number of rooms added to the container should be 1!", 1, rooms.size());
+        assertTrue("The container's rooms list should contain the added room!", rooms.contains(room));
+
+        // Check all cells in the room and make sure that they reference the same corresponding cell of the container
+        Iterable<Cell> roomCells = room.getCells();
+        for (Cell roomCell : roomCells) {
+            int cellX = roomCell.getX();
+            int cellY = roomCell.getY();
+
+            Cell containerCell = container.getCellAt(cellX, cellY);
+            assertEquals(String.format("Cells at (%d, %d) are not equal!", cellX, cellY), roomCell, containerCell);
+        }
     }
 }
