@@ -3,20 +3,15 @@ package prototypev.PermissiveFov.Tests.LevelGeneration.Generators;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import prototypev.PermissiveFov.LevelGeneration.DirectionType;
 import prototypev.PermissiveFov.LevelGeneration.Entities.Room;
 import prototypev.PermissiveFov.LevelGeneration.Generators.MazeGenerator;
 import prototypev.PermissiveFov.LevelGeneration.Generators.RoomGenerator;
-import prototypev.PermissiveFov.LevelGeneration.SideType;
 import prototypev.PermissiveFov.Randomizer;
 import prototypev.PermissiveFov.Tests.TestBase;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
-import static prototypev.PermissiveFov.Tests.TestHelper.assertSides;
 import static prototypev.PermissiveFov.Tests.TestHelper.createCorridorInAllDirections;
 
 public class RoomGeneratorTests extends TestBase {
@@ -80,7 +75,8 @@ public class RoomGeneratorTests extends TestBase {
         MazeGenerator mazeGenerator = new MazeGenerator(30, 70);
         Room container = mazeGenerator.generate(0, 0, 15, 15);
 
-        RoomGenerator.createRooms(container, numRooms, minWidth, maxWidth, minHeight, maxHeight);
+        RoomGenerator roomGenerator = new RoomGenerator(minWidth, maxWidth, minHeight, maxHeight);
+        roomGenerator.createRooms(container, numRooms);
 
         List<Room> rooms = container.getRooms();
         assertEquals("Number of rooms placed do not match!", numRooms, rooms.size());

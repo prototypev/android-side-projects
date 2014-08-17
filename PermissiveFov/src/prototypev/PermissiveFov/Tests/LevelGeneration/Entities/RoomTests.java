@@ -27,13 +27,13 @@ public class RoomTests extends TestBase {
     }
 
     @Test
-    public void newRoom_InvalidArguments_ExpectsException() {
+    public void createFilledRoom_InvalidArguments_ExpectsException() {
         exception.expect(IllegalArgumentException.class);
         Room.createFilledRoom(-1, -1, 0, 0);
     }
 
     @Test
-    public void newRoom_ExpectsAllCellsNotVisited() {
+    public void createFilledRoom_ExpectsAllCellsNotVisited() {
         Room room = Room.createFilledRoom(top, left, 3, 3);
         assertTrue("No cell should be visited when creating a new room!", room.getVisitedCells().isEmpty());
     }

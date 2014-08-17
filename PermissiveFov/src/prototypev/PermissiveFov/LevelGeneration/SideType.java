@@ -21,6 +21,16 @@ public enum SideType {
         return name;
     }
 
+    public TileType toTileType() {
+        for (TileType tileType : TileType.values()) {
+            if (tileType.getValue() == value) {
+                return tileType;
+            }
+        }
+
+        throw new IllegalStateException(String.format("Cannot find matching TileType for SideType: %s", name));
+    }
+
     @Override
     public String toString() {
         return String.valueOf(symbol);
