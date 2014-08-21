@@ -30,6 +30,15 @@ public class Level {
         tileTypes[y][x] = tileType;
     }
 
+    /**
+     * @param x The horizontal component.
+     * @param y The vertical component.
+     * @return true if the specified co-ordinates is outside the bounds of this level; otherwise false.
+     */
+    public boolean isOutOfBounds(int x, int y) {
+        return x < 0 || y < 0 || y >= height || x >= width;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
