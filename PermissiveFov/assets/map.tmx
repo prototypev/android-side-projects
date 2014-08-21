@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="17" height="1" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="31" height="31" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="Tileset" tilewidth="32" tileheight="32" spacing="1" margin="1">
   <image source="gfx/Tiles/Tileset_default.png" width="199" height="100"/>
   <tile id="0">
@@ -87,15 +87,23 @@
     <property name="TileType" value="TILE_GRAVESTONE"/>
    </properties>
   </tile>
-  <tile id="17">
+ </tileset>
+ <tileset firstgid="19" name="meta_tiles" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="gfx/Tiles/Meta_tiles.png" width="67" height="34"/>
+  <tile id="0">
    <properties>
-    <property name="TileType" value=""/>
+    <property name="Collidable" value="true"/>
    </properties>
   </tile>
  </tileset>
- <layer name="Background" width="17" height="1">
+ <layer name="Background" width="31" height="31">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAAw3DARKAEBAAwJMKEfX/z9qd2RQRh9litfk6XZ5ePnZvP3+HGwo5lXZEAAAA
+   H4sIAAAAAAAAA+3DCw5AMBQAwUfRD1rc/7D2Gk12klkiYmViZmHlzc7BjTsbTx58+PLiZ9u2bdv2BH+4Y+nHBA8AAA==
+  </data>
+ </layer>
+ <layer name="Meta" width="31" height="31">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3DAQ0AAAjAoHfQ/lkNImxMtaqqqvrgAbjhuPcEDwAA
   </data>
  </layer>
 </map>
