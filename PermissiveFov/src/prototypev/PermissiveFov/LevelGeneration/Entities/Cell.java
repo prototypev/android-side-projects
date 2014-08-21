@@ -8,9 +8,9 @@ import java.util.Map;
 
 public class Cell {
     private final Map<DirectionType, SideType> sides = new HashMap<DirectionType, SideType>();
+    private boolean isVisited;
     private int x;
     private int y;
-    private boolean isVisited;
 
     /**
      * Creates a new Cell at the specified co-ordinates.
@@ -38,6 +38,59 @@ public class Cell {
      */
     public Cell() {
         this(0, 0);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Cell) {
+            Cell cell = (Cell) o;
+            return cell.x == this.x && cell.y == this.y;
+        }
+
+        return false;
+    }
+
+    /**
+     * If the cell is a dead-end, determine the direction where the corridor direction is.
+     *
+     * @return The corridor direction.
+     */
+    public DirectionType getDeadEndCorridorDirection() {
+        if (!isDeadEnd()) {
+            throw new IllegalStateException(String.format("Cannot get dead end corridor direction for non dead end cell (%d, %d)!", x, y));
+        }
+
+        for (Map.Entry<DirectionType, SideType> entry : sides.entrySet()) {
+            if (entry.getValue() == SideType.EMPTY) {
+                return entry.getKey();
+            }
+        }
+
+        // Should not reach here
+        throw new IllegalStateException("A dead end cell must have 1 side empty!");
+    }
+
+    /**
+     * @param direction The direction of the side to get.
+     * @return The type of the side in the specified direction.
+     */
+    public SideType getSide(DirectionType direction) {
+        return sides.get(direction);
+    }
+
+    /**
+     * @return The number of walls surrounding this cell.
+     */
+    public int getWallCount() {
+        int wallCount = 0;
+
+        for (Map.Entry<DirectionType, SideType> entry : sides.entrySet()) {
+            if (entry.getValue() == SideType.WALL) {
+                wallCount++;
+            }
+        }
+
+        return wallCount;
     }
 
     /**
@@ -93,59 +146,6 @@ public class Cell {
     }
 
     /**
-     * If the cell is a dead-end, determine the direction where the corridor direction is.
-     *
-     * @return The corridor direction.
-     */
-    public DirectionType getDeadEndCorridorDirection() {
-        if (!isDeadEnd()) {
-            throw new IllegalStateException(String.format("Cannot get dead end corridor direction for non dead end cell (%d, %d)!", x, y));
-        }
-
-        for (Map.Entry<DirectionType, SideType> entry : sides.entrySet()) {
-            if (entry.getValue() == SideType.EMPTY) {
-                return entry.getKey();
-            }
-        }
-
-        // Should not reach here
-        throw new IllegalStateException("A dead end cell must have 1 side empty!");
-    }
-
-    /**
-     * @return The number of walls surrounding this cell.
-     */
-    public int getWallCount() {
-        int wallCount = 0;
-
-        for (Map.Entry<DirectionType, SideType> entry : sides.entrySet()) {
-            if (entry.getValue() == SideType.WALL) {
-                wallCount++;
-            }
-        }
-
-        return wallCount;
-    }
-
-    /**
-     * @param direction The direction of the side to get.
-     * @return The type of the side in the specified direction.
-     */
-    public SideType getSide(DirectionType direction) {
-        return sides.get(direction);
-    }
-
-    /**
-     * Sets the side type in the specified direction.
-     *
-     * @param direction The direction of the side to set.
-     * @param sideType  The type of the side to set.
-     */
-    public void setSide(DirectionType direction, SideType sideType) {
-        sides.put(direction, sideType);
-    }
-
-    /**
      * @return true if this cell has been visited; otherwise false.
      */
     public boolean isVisited() {
@@ -161,13 +161,13 @@ public class Cell {
         this.isVisited = isVisited;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Cell) {
-            Cell cell = (Cell) o;
-            return cell.x == this.x && cell.y == this.y;
-        }
-
-        return false;
+    /**
+     * Sets the side type in the specified direction.
+     *
+     * @param direction The direction of the side to set.
+     * @param sideType  The type of the side to set.
+     */
+    public void setSide(DirectionType direction, SideType sideType) {
+        sides.put(direction, sideType);
     }
 }

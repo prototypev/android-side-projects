@@ -8,9 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Room {
-    public final int width;
     public final int height;
-
+    public final int width;
     private final List<Cell> cells;
     private final List<Room> rooms = new LinkedList<Room>();
 
@@ -36,6 +35,27 @@ public class Room {
                 cells.add(new Cell(left + x, top + y));
             }
         }
+    }
+
+    /**
+     * Creates an empty room.
+     *
+     * @param top    The top bound.
+     * @param left   The left bound.
+     * @param width  The number of cells spanning the room horizontally.
+     * @param height The number of cells spanning the room vertically.
+     * @return The room.
+     */
+    public static Room createEmptyRoom(int top, int left, int width, int height) {
+        Room room = createFilledRoom(top, left, width, height);
+
+        for (Cell cell : room.cells) {
+            for (DirectionType direction : DirectionType.values()) {
+                cell.setSide(direction, SideType.EMPTY);
+            }
+        }
+
+        return room;
     }
 
     /**
@@ -77,76 +97,6 @@ public class Room {
         }
 
         return room;
-    }
-
-    /**
-     * Creates an empty room.
-     *
-     * @param top    The top bound.
-     * @param left   The left bound.
-     * @param width  The number of cells spanning the room horizontally.
-     * @param height The number of cells spanning the room vertically.
-     * @return The room.
-     */
-    public static Room createEmptyRoom(int top, int left, int width, int height) {
-        Room room = createFilledRoom(top, left, width, height);
-
-        for (Cell cell : room.cells) {
-            for (DirectionType direction : DirectionType.values()) {
-                cell.setSide(direction, SideType.EMPTY);
-            }
-        }
-
-        return room;
-    }
-
-    /**
-     * @return The top bounds.
-     */
-    public int getTop() {
-        return cells.get(0).getY();
-    }
-
-    /**
-     * @return The left bounds.
-     */
-    public int getLeft() {
-        return cells.get(0).getX();
-    }
-
-    /**
-     * Moves the room to the specified co-ordinates.
-     *
-     * @param x The horizontal component.
-     * @param y The vertical component.
-     */
-    public void moveTo(int x, int y) {
-        int deltaX = x - getLeft();
-        int deltaY = y - getTop();
-
-        if (deltaX != 0 || deltaY != 0) {
-            for (Cell cell : cells) {
-                int newX = cell.getX() + deltaX;
-                cell.setX(newX);
-
-                int newY = cell.getY() + deltaY;
-                cell.setY(newY);
-            }
-        }
-    }
-
-    /**
-     * @return The list of all cells in this room.
-     */
-    public Iterable<Cell> getCells() {
-        return cells;
-    }
-
-    /**
-     * @return The inner rooms that are contained within this room.
-     */
-    public List<Room> getRooms() {
-        return rooms;
     }
 
     /**
@@ -198,31 +148,66 @@ public class Room {
     }
 
     /**
-     * @return The list of cells that have been visited.
+     * @param x         The horizontal component.
+     * @param y         The vertical component.
+     * @param direction The direction to check.
+     * @return The cell adjacent from the specified co-ordinates in the specified direction.
+     * If no adjacent cells are available, returns null.
      */
-    public List<Cell> getVisitedCells() {
-        List<Cell> visitedCells = new ArrayList<Cell>();
-
-        for (Cell cell : cells) {
-            if (cell.isVisited()) {
-                visitedCells.add(cell);
-            }
+    public Cell getAdjacentCell(int x, int y, DirectionType direction) {
+        if (!hasAdjacentCell(x, y, direction)) {
+            return null;
         }
 
-        return visitedCells;
+        switch (direction) {
+            case NORTH:
+                return getCellAt(x, y - 1);
+
+            case WEST:
+                return getCellAt(x - 1, y);
+
+            case SOUTH:
+                return getCellAt(x, y + 1);
+
+            case EAST:
+                return getCellAt(x + 1, y);
+
+            default:
+                // This should not happen
+                throw new IllegalStateException(String.format("Direction %s is invalid.", direction.getName()));
+        }
     }
 
     /**
-     * @return true if all cells in this room have been visited; otherwise false.
+     * @param cell The cell to check.
+     * @return The cell adjacent from the specified cell in the specified direction.
+     * If no adjacent cells are available, returns null.
      */
-    public boolean isAllCellsVisited() {
-        for (Cell cell : cells) {
-            if (!cell.isVisited()) {
-                return false;
-            }
+    public Cell getAdjacentCell(Cell cell, DirectionType direction) {
+        return getAdjacentCell(cell.getX(), cell.getY(), direction);
+    }
+
+    /**
+     * @param x The horizontal component.
+     * @param y The vertical component.
+     * @return The cell at the specified co-ordinates.
+     */
+    public Cell getCellAt(int x, int y) {
+        if (isOutOfBounds(x, y)) {
+            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
         }
 
-        return true;
+        int left = getLeft();
+        int top = getTop();
+        int index = (y - top) * width + x - left;
+        return cells.get(index);
+    }
+
+    /**
+     * @return The list of all cells in this room.
+     */
+    public Iterable<Cell> getCells() {
+        return cells;
     }
 
     /**
@@ -258,48 +243,39 @@ public class Room {
     }
 
     /**
-     * @param x The horizontal component.
-     * @param y The vertical component.
-     * @return The cell at the specified co-ordinates.
+     * @return The left bounds.
      */
-    public Cell getCellAt(int x, int y) {
-        if (isOutOfBounds(x, y)) {
-            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
-        }
-
-        int left = getLeft();
-        int top = getTop();
-        int index = (y - top) * width + x - left;
-        return cells.get(index);
+    public int getLeft() {
+        return cells.get(0).getX();
     }
 
     /**
-     * @param cell The new cell replacing the old cell.
-     * @param x    The horizontal component.
-     * @param y    The vertical component.
+     * @return The inner rooms that are contained within this room.
      */
-    private void replaceCellAt(Cell cell, int x, int y) {
-        if (isOutOfBounds(x, y)) {
-            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
-        }
-
-        int left = getLeft();
-        int top = getTop();
-        int index = (y - top) * width + x - left;
-
-        cells.set(index, cell);
+    public List<Room> getRooms() {
+        return rooms;
     }
 
     /**
-     * @param x The horizontal component.
-     * @param y The vertical component.
-     * @return true if the specified co-ordinates is outside the bounds of this room; otherwise false.
+     * @return The top bounds.
      */
-    public boolean isOutOfBounds(int x, int y) {
-        int left = getLeft();
-        int top = getTop();
+    public int getTop() {
+        return cells.get(0).getY();
+    }
 
-        return x < left || y < top || y >= top + height || x >= left + width;
+    /**
+     * @return The list of cells that have been visited.
+     */
+    public List<Cell> getVisitedCells() {
+        List<Cell> visitedCells = new ArrayList<Cell>();
+
+        for (Cell cell : cells) {
+            if (cell.isVisited()) {
+                visitedCells.add(cell);
+            }
+        }
+
+        return visitedCells;
     }
 
     /**
@@ -348,46 +324,6 @@ public class Room {
      * @param x         The horizontal component.
      * @param y         The vertical component.
      * @param direction The direction to check.
-     * @return The cell adjacent from the specified co-ordinates in the specified direction.
-     * If no adjacent cells are available, returns null.
-     */
-    public Cell getAdjacentCell(int x, int y, DirectionType direction) {
-        if (!hasAdjacentCell(x, y, direction)) {
-            return null;
-        }
-
-        switch (direction) {
-            case NORTH:
-                return getCellAt(x, y - 1);
-
-            case WEST:
-                return getCellAt(x - 1, y);
-
-            case SOUTH:
-                return getCellAt(x, y + 1);
-
-            case EAST:
-                return getCellAt(x + 1, y);
-
-            default:
-                // This should not happen
-                throw new IllegalStateException(String.format("Direction %s is invalid.", direction.getName()));
-        }
-    }
-
-    /**
-     * @param cell The cell to check.
-     * @return The cell adjacent from the specified cell in the specified direction.
-     * If no adjacent cells are available, returns null.
-     */
-    public Cell getAdjacentCell(Cell cell, DirectionType direction) {
-        return getAdjacentCell(cell.getX(), cell.getY(), direction);
-    }
-
-    /**
-     * @param x         The horizontal component.
-     * @param y         The vertical component.
-     * @param direction The direction to check.
      * @return true if the adjacent cell is a corridor; otherwise false.
      * A corridor is defined as a cell with at least 1 side empty.
      */
@@ -409,6 +345,52 @@ public class Room {
      */
     public boolean isAdjacentCellCorridor(Cell cell, DirectionType direction) {
         return isAdjacentCellCorridor(cell.getX(), cell.getY(), direction);
+    }
+
+    /**
+     * @return true if all cells in this room have been visited; otherwise false.
+     */
+    public boolean isAllCellsVisited() {
+        for (Cell cell : cells) {
+            if (!cell.isVisited()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param x The horizontal component.
+     * @param y The vertical component.
+     * @return true if the specified co-ordinates is outside the bounds of this room; otherwise false.
+     */
+    public boolean isOutOfBounds(int x, int y) {
+        int left = getLeft();
+        int top = getTop();
+
+        return x < left || y < top || y >= top + height || x >= left + width;
+    }
+
+    /**
+     * Moves the room to the specified co-ordinates.
+     *
+     * @param x The horizontal component.
+     * @param y The vertical component.
+     */
+    public void moveTo(int x, int y) {
+        int deltaX = x - getLeft();
+        int deltaY = y - getTop();
+
+        if (deltaX != 0 || deltaY != 0) {
+            for (Cell cell : cells) {
+                int newX = cell.getX() + deltaX;
+                cell.setX(newX);
+
+                int newY = cell.getY() + deltaY;
+                cell.setY(newY);
+            }
+        }
     }
 
     /**
@@ -486,5 +468,22 @@ public class Room {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * @param cell The new cell replacing the old cell.
+     * @param x    The horizontal component.
+     * @param y    The vertical component.
+     */
+    private void replaceCellAt(Cell cell, int x, int y) {
+        if (isOutOfBounds(x, y)) {
+            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
+        }
+
+        int left = getLeft();
+        int top = getTop();
+        int index = (y - top) * width + x - left;
+
+        cells.set(index, cell);
     }
 }

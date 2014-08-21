@@ -12,18 +12,20 @@ import static org.junit.Assert.*;
 
 public class CellTests extends TestBase {
     @Test
-    public void newCell_InvalidArguments_ExpectsException() {
-        exception.expect(IllegalArgumentException.class);
-        new Cell(-1, -1);
-    }
-
-    @Test
-    public void isDeadEnd_OneSideEmpty_ExpectsTrue() {
+    public void getDeadEndCorridorDirection_DefaultCase_ExpectsCorrectValues() {
         for (DirectionType direction : DirectionType.values()) {
             Cell cell = new Cell();
             cell.setSide(direction, SideType.EMPTY);
-            assertTrue("Cell with only one side empty should be a dead end!", cell.isDeadEnd());
+            assertEquals(MessageFormat.format("Dead end cell with {0} side empty should return {0}!", direction.getName()), direction, cell.getDeadEndCorridorDirection());
         }
+    }
+
+    @Test
+    public void getDeadEndCorridorDirection_NonDeadEnd_ExpectsException() {
+        Cell cell = new Cell();
+
+        exception.expect(IllegalStateException.class);
+        cell.getDeadEndCorridorDirection();
     }
 
     @Test
@@ -43,19 +45,17 @@ public class CellTests extends TestBase {
     }
 
     @Test
-    public void getDeadEndCorridorDirection_NonDeadEnd_ExpectsException() {
-        Cell cell = new Cell();
-
-        exception.expect(IllegalStateException.class);
-        cell.getDeadEndCorridorDirection();
-    }
-
-    @Test
-    public void getDeadEndCorridorDirection_DefaultCase_ExpectsCorrectValues() {
+    public void isDeadEnd_OneSideEmpty_ExpectsTrue() {
         for (DirectionType direction : DirectionType.values()) {
             Cell cell = new Cell();
             cell.setSide(direction, SideType.EMPTY);
-            assertEquals(MessageFormat.format("Dead end cell with {0} side empty should return {0}!", direction.getName()), direction, cell.getDeadEndCorridorDirection());
+            assertTrue("Cell with only one side empty should be a dead end!", cell.isDeadEnd());
         }
+    }
+
+    @Test
+    public void newCell_InvalidArguments_ExpectsException() {
+        exception.expect(IllegalArgumentException.class);
+        new Cell(-1, -1);
     }
 }

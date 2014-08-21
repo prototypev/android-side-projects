@@ -11,13 +11,16 @@ public class SplashResourceManager implements IResourceManager {
     private static final String SPLASH_FILE = "gfx/Splash.png";
 
     private final BaseGameActivity activity;
-
-    private BitmapTextureAtlas splashTextureAtlas;
-    private ITextureRegion splashRegion;
     private Sprite splash;
+    private ITextureRegion splashRegion;
+    private BitmapTextureAtlas splashTextureAtlas;
 
     public SplashResourceManager(BaseGameActivity activity) {
         this.activity = activity;
+    }
+
+    public Sprite getSplash() {
+        return splash;
     }
 
     @Override
@@ -36,9 +39,5 @@ public class SplashResourceManager implements IResourceManager {
 
         splash.detachSelf();
         splash.dispose();
-    }
-
-    public Sprite getSplash() {
-        return splash;
     }
 }

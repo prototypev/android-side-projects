@@ -12,16 +12,6 @@ import static org.junit.Assert.*;
 
 public class DirectionPickerTests extends TestBase {
     @Test
-    public void getNextDirection_ExhaustAllDirections_ExpectsException() {
-        DirectionPicker directionPicker = new DirectionPicker();
-
-        exception.expect(IllegalStateException.class);
-        for (int i = 0; i <= DirectionType.size; i++) {
-            directionPicker.getNextDirection();
-        }
-    }
-
-    @Test
     public void getNextDirection_DefaultCase_ExpectsCorrectValues() {
         DirectionPicker directionPicker = new DirectionPicker();
 
@@ -34,6 +24,16 @@ public class DirectionPickerTests extends TestBase {
             assertFalse(String.format("Direction %s should not have been picked yet!", direction.getName()), directionsPicked.contains(direction));
 
             directionsPicked.add(direction);
+        }
+    }
+
+    @Test
+    public void getNextDirection_ExhaustAllDirections_ExpectsException() {
+        DirectionPicker directionPicker = new DirectionPicker();
+
+        exception.expect(IllegalStateException.class);
+        for (int i = 0; i <= DirectionType.size; i++) {
+            directionPicker.getNextDirection();
         }
     }
 

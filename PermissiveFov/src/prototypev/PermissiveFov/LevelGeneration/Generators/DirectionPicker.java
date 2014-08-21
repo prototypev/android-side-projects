@@ -43,31 +43,6 @@ public class DirectionPicker {
     }
 
     /**
-     * @return A random direction.
-     */
-    private static DirectionType getRandomDirection() {
-        return Randomizer.getInstance().getRandomEnum(DirectionType.class);
-    }
-
-    /**
-     * Resets the state of the DirectionPicker.
-     *
-     * @param initialDirection The initial direction.
-     */
-    public void reset(DirectionType initialDirection) {
-        previousDirection = initialDirection;
-
-        directionsPicked.clear();
-    }
-
-    /**
-     * @return true if there is a next direction to pick; otherwise false.
-     */
-    public boolean hasNextDirection() {
-        return directionsPicked.size() < DirectionType.size;
-    }
-
-    /**
      * @return The next direction available.
      */
     public DirectionType getNextDirection() {
@@ -84,6 +59,31 @@ public class DirectionPicker {
         directionsPicked.add(newDirection);
 
         return newDirection;
+    }
+
+    /**
+     * @return true if there is a next direction to pick; otherwise false.
+     */
+    public boolean hasNextDirection() {
+        return directionsPicked.size() < DirectionType.size;
+    }
+
+    /**
+     * Resets the state of the DirectionPicker.
+     *
+     * @param initialDirection The initial direction.
+     */
+    public void reset(DirectionType initialDirection) {
+        previousDirection = initialDirection;
+
+        directionsPicked.clear();
+    }
+
+    /**
+     * @return A random direction.
+     */
+    private static DirectionType getRandomDirection() {
+        return Randomizer.getInstance().getRandomEnum(DirectionType.class);
     }
 
     /**

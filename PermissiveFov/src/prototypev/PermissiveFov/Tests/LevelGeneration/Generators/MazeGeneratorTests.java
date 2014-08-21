@@ -15,20 +15,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class MazeGeneratorTests extends TestBase {
-    private int top;
     private int left;
-
-    @Before
-    public void testSetup() {
-        top = Randomizer.getInstance().nextInt(2, 10);
-        left = Randomizer.getInstance().nextInt(2, 10);
-    }
-
-    @Test
-    public void newMazeGenerator_InvalidArguments_ExpectsException() {
-        exception.expect(IllegalArgumentException.class);
-        new MazeGenerator(-1, -1);
-    }
+    private int top;
 
     @Test
     public void generate_VarySparseness_ExpectsMatchingPercentCellsAsSolidRock() {
@@ -53,6 +41,12 @@ public class MazeGeneratorTests extends TestBase {
     }
 
     @Test
+    public void newMazeGenerator_InvalidArguments_ExpectsException() {
+        exception.expect(IllegalArgumentException.class);
+        new MazeGenerator(-1, -1);
+    }
+
+    @Test
     public void removeDeadEnds_WithMaxModifier_ExpectsAllDeadEndsRemoved() {
         MazeGenerator generator = new MazeGenerator(30, 70);
 
@@ -68,6 +62,12 @@ public class MazeGeneratorTests extends TestBase {
         // We expect the map to have no dead ends when we’re done
         deadEndCells = room.getDeadEndCells();
         assertTrue("All dead ends should have been removed!", deadEndCells.isEmpty());
+    }
+
+    @Before
+    public void testSetup() {
+        top = Randomizer.getInstance().nextInt(2, 10);
+        left = Randomizer.getInstance().nextInt(2, 10);
     }
 
     /**

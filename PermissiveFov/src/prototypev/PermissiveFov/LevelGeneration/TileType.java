@@ -2,10 +2,9 @@ package prototypev.PermissiveFov.LevelGeneration;
 
 public enum TileType {
     UNDEFINED(-1, "", ' '), WALL(0, "TILE_WALL", '#'), EMPTY(1, "TILE_EMPTY", '.'), DOOR(2, "TILE_DOOR", '+');
-
-    private final int value;
     private final String name;
     private final char symbol;
+    private final int value;
 
     private TileType(int value, String name, char symbol) {
         this.value = value;
@@ -13,12 +12,12 @@ public enum TileType {
         this.symbol = symbol;
     }
 
-    public int getValue() {
-        return value;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     @Override

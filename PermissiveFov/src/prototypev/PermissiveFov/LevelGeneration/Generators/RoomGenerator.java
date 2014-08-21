@@ -9,10 +9,10 @@ import prototypev.PermissiveFov.Randomizer;
 import java.util.List;
 
 public class RoomGenerator {
-    private final int minWidth;
+    private final int maxHeight;
     private final int maxWidth;
     private final int minHeight;
-    private final int maxHeight;
+    private final int minWidth;
 
     /**
      * Creates a new RoomGenerator with the specified constraints.
@@ -80,6 +80,46 @@ public class RoomGenerator {
         }
 
         return roomPlacementScore;
+    }
+
+    /**
+     * Creates rooms of random dimensions bounded by the input parameters in the specified containing room.
+     *
+     * @param container The containing room.
+     * @param numRooms  The number of rooms to create.
+     */
+    public void createRooms(Room container, int numRooms) {
+        for (int roomCounter = 0; roomCounter < numRooms; roomCounter++) {
+            int width = Randomizer.getInstance().nextInt(minWidth, maxWidth);
+            int height = Randomizer.getInstance().nextInt(minHeight, maxHeight);
+            Room room = Room.createWalledInRoom(0, 0, width, height);
+
+            int bestScore = Integer.MAX_VALUE;
+            int bestX = -1;
+            int bestY = -1;
+
+            // Ensure that rooms are always created adjacent to a corridor
+            List<Cell> corridorCells = container.getCorridorCells();
+            if (corridorCells.isEmpty()) {
+                throw new IllegalStateException("Cannot place rooms if map has no corridors!");
+            }
+
+            for (Cell cell : corridorCells) {
+                int currentRoomPlacementScore = getRoomPlacementScore(container, room, cell.getX(), cell.getY());
+                if (currentRoomPlacementScore < bestScore) {
+                    bestScore = currentRoomPlacementScore;
+                    bestX = cell.getX();
+                    bestY = cell.getY();
+                }
+            }
+
+            if (bestX < 0 || bestY < 0) {
+                throw new IllegalStateException("Room placement point should have been initialized!");
+            }
+
+            // Create room at best room placement cell
+            container.addRoom(room, bestX, bestY);
+        }
     }
 
     /**
@@ -239,46 +279,6 @@ public class RoomGenerator {
                     room.setCellSide(cellSouth, DirectionType.EAST, SideType.WALL);
                 }
             }
-        }
-    }
-
-    /**
-     * Creates rooms of random dimensions bounded by the input parameters in the specified containing room.
-     *
-     * @param container The containing room.
-     * @param numRooms  The number of rooms to create.
-     */
-    public void createRooms(Room container, int numRooms) {
-        for (int roomCounter = 0; roomCounter < numRooms; roomCounter++) {
-            int width = Randomizer.getInstance().nextInt(minWidth, maxWidth);
-            int height = Randomizer.getInstance().nextInt(minHeight, maxHeight);
-            Room room = Room.createWalledInRoom(0, 0, width, height);
-
-            int bestScore = Integer.MAX_VALUE;
-            int bestX = -1;
-            int bestY = -1;
-
-            // Ensure that rooms are always created adjacent to a corridor
-            List<Cell> corridorCells = container.getCorridorCells();
-            if (corridorCells.isEmpty()) {
-                throw new IllegalStateException("Cannot place rooms if map has no corridors!");
-            }
-
-            for (Cell cell : corridorCells) {
-                int currentRoomPlacementScore = getRoomPlacementScore(container, room, cell.getX(), cell.getY());
-                if (currentRoomPlacementScore < bestScore) {
-                    bestScore = currentRoomPlacementScore;
-                    bestX = cell.getX();
-                    bestY = cell.getY();
-                }
-            }
-
-            if (bestX < 0 || bestY < 0) {
-                throw new IllegalStateException("Room placement point should have been initialized!");
-            }
-
-            // Create room at best room placement cell
-            container.addRoom(room, bestX, bestY);
         }
     }
 }

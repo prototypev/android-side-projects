@@ -5,9 +5,8 @@ import prototypev.PermissiveFov.LevelGeneration.TileType;
 import java.util.Arrays;
 
 public class Level {
-    public final int width;
     public final int height;
-
+    public final int width;
     private final TileType[][] tileTypes;
 
     public Level(int width, int height) {
@@ -26,10 +25,6 @@ public class Level {
         return tileTypes[y][x];
     }
 
-    public void setTileTypeAt(int x, int y, TileType tileType) {
-        tileTypes[y][x] = tileType;
-    }
-
     /**
      * @param x The horizontal component.
      * @param y The vertical component.
@@ -37,6 +32,10 @@ public class Level {
      */
     public boolean isOutOfBounds(int x, int y) {
         return x < 0 || y < 0 || y >= height || x >= width;
+    }
+
+    public void setTileTypeAt(int x, int y, TileType tileType) {
+        tileTypes[y][x] = tileType;
     }
 
     @Override

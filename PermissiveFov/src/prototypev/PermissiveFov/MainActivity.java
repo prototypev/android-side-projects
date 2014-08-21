@@ -1,5 +1,6 @@
 package prototypev.PermissiveFov;
 
+import org.andengine.engine.camera.BoundCamera;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -14,15 +15,14 @@ import prototypev.PermissiveFov.Scenes.GameScene;
 import prototypev.PermissiveFov.Scenes.SplashScene;
 
 public class MainActivity extends BaseGameActivity {
-    private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
-
-    private SplashResourceManager splashResourceManager;
+    private static final int CAMERA_WIDTH = 800;
     private GameResourceManager gameResourceManager;
+    private SplashResourceManager splashResourceManager;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
-        Camera camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+        Camera camera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 //        engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
@@ -62,6 +62,8 @@ public class MainActivity extends BaseGameActivity {
 
                     GameScene gameScene = new GameScene(activity, gameResourceManager);
                     mEngine.setScene(gameScene);
+
+
                 } catch (Exception e) {
                     // TODO: Need to think of error handling strategy
                     e.printStackTrace();

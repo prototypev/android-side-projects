@@ -15,13 +15,40 @@ import static org.junit.Assert.*;
 import static prototypev.PermissiveFov.Tests.TestHelper.createCorridorInAllDirections;
 
 public class RoomGeneratorTests extends TestBase {
-    private int top;
     private int left;
+    private int top;
 
-    @Before
-    public void testSetup() {
-        top = Randomizer.getInstance().nextInt(2, 10);
-        left = Randomizer.getInstance().nextInt(2, 10);
+    @Test
+    public void createRooms_NormalCase_ExpectsValidRoomDimensions() {
+        int minWidth = 2;
+        int maxWidth = 5;
+        int minHeight = 2;
+        int maxHeight = 5;
+        int numRooms = 5;
+
+        MazeGenerator mazeGenerator = new MazeGenerator(30, 70);
+        Room container = mazeGenerator.generate(0, 0, 15, 15);
+
+        RoomGenerator roomGenerator = new RoomGenerator(minWidth, maxWidth, minHeight, maxHeight);
+        roomGenerator.createRooms(container, numRooms);
+
+        List<Room> rooms = container.getRooms();
+        assertEquals("Number of rooms placed do not match!", numRooms, rooms.size());
+
+        for (Room room : rooms) {
+            assertThat("Invalid room width generated!", room.width, Matchers.greaterThanOrEqualTo(minWidth));
+            assertThat("Invalid room width generated!", room.width, Matchers.lessThanOrEqualTo(maxWidth));
+
+            assertThat("Invalid room height generated!", room.height, Matchers.greaterThanOrEqualTo(minHeight));
+            assertThat("Invalid room height generated!", room.height, Matchers.lessThanOrEqualTo(maxHeight));
+
+            int roomX = room.getLeft();
+            int roomY = room.getTop();
+            assertFalse("The room should be inside the container!", container.isOutOfBounds(roomX, roomY));
+            assertFalse("The room should be inside the container!", container.isOutOfBounds(roomX + room.width - 1, roomY + room.height - 1));
+        }
+
+        System.out.println(container);
     }
 
     @Test
@@ -64,36 +91,9 @@ public class RoomGeneratorTests extends TestBase {
         assertEquals("Room placement score is incorrect!", 17, score);
     }
 
-    @Test
-    public void createRooms_NormalCase_ExpectsValidRoomDimensions() {
-        int minWidth = 2;
-        int maxWidth = 5;
-        int minHeight = 2;
-        int maxHeight = 5;
-        int numRooms = 5;
-
-        MazeGenerator mazeGenerator = new MazeGenerator(30, 70);
-        Room container = mazeGenerator.generate(0, 0, 15, 15);
-
-        RoomGenerator roomGenerator = new RoomGenerator(minWidth, maxWidth, minHeight, maxHeight);
-        roomGenerator.createRooms(container, numRooms);
-
-        List<Room> rooms = container.getRooms();
-        assertEquals("Number of rooms placed do not match!", numRooms, rooms.size());
-
-        for (Room room : rooms) {
-            assertThat("Invalid room width generated!", room.width, Matchers.greaterThanOrEqualTo(minWidth));
-            assertThat("Invalid room width generated!", room.width, Matchers.lessThanOrEqualTo(maxWidth));
-
-            assertThat("Invalid room height generated!", room.height, Matchers.greaterThanOrEqualTo(minHeight));
-            assertThat("Invalid room height generated!", room.height, Matchers.lessThanOrEqualTo(maxHeight));
-
-            int roomX = room.getLeft();
-            int roomY = room.getTop();
-            assertFalse("The room should be inside the container!", container.isOutOfBounds(roomX, roomY));
-            assertFalse("The room should be inside the container!", container.isOutOfBounds(roomX + room.width - 1, roomY + room.height - 1));
-        }
-
-        System.out.println(container);
+    @Before
+    public void testSetup() {
+        top = Randomizer.getInstance().nextInt(2, 10);
+        left = Randomizer.getInstance().nextInt(2, 10);
     }
 }

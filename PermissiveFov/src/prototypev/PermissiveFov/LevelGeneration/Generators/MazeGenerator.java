@@ -146,6 +146,38 @@ public class MazeGenerator {
     }
 
     /**
+     * @param room The containing room.
+     * @param x    The horizontal component of the cell to exclude.
+     * @param y    The vertical component of the cell to exclude.
+     * @return A random visited cell.
+     */
+    private Cell getRandomVisitedCellExcluding(Room room, int x, int y) {
+        if (room.isOutOfBounds(x, y)) {
+            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
+        }
+
+        List<Cell> visitedCells = room.getVisitedCells();
+        if (visitedCells.isEmpty()) {
+            throw new IllegalStateException("There are no visited cells to return.");
+        }
+
+        // Do not include starting point
+        Iterator<Cell> iterator = visitedCells.iterator();
+        while (iterator.hasNext()) {
+            Cell cell = iterator.next();
+            if (cell.getX() == x && cell.getY() == y) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        int index = Randomizer.getInstance().nextInt(visitedCells.size());
+        Cell pickedCell = visitedCells.get(index);
+
+        return pickedCell;
+    }
+
+    /**
      * Removes dead-end cells from a room based on the spareness level.
      *
      * @param room The containing room.
@@ -176,37 +208,5 @@ public class MazeGenerator {
                 room.setCellSide(cell, cell.getDeadEndCorridorDirection(), SideType.WALL);
             }
         }
-    }
-
-    /**
-     * @param room The containing room.
-     * @param x    The horizontal component of the cell to exclude.
-     * @param y    The vertical component of the cell to exclude.
-     * @return A random visited cell.
-     */
-    private Cell getRandomVisitedCellExcluding(Room room, int x, int y) {
-        if (room.isOutOfBounds(x, y)) {
-            throw new IllegalStateException(String.format("(%d, %d) is out of bounds!", x, y));
-        }
-
-        List<Cell> visitedCells = room.getVisitedCells();
-        if (visitedCells.isEmpty()) {
-            throw new IllegalStateException("There are no visited cells to return.");
-        }
-
-        // Do not include starting point
-        Iterator<Cell> iterator = visitedCells.iterator();
-        while (iterator.hasNext()) {
-            Cell cell = iterator.next();
-            if (cell.getX() == x && cell.getY() == y) {
-                iterator.remove();
-                break;
-            }
-        }
-
-        int index = Randomizer.getInstance().nextInt(visitedCells.size());
-        Cell pickedCell = visitedCells.get(index);
-
-        return pickedCell;
     }
 }
