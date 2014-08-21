@@ -132,6 +132,9 @@ public class GameResourceManager implements IResourceManager {
         TMXLoader tmxLoader = new TMXLoader(activity.getAssets(), activity.getTextureManager(), activity.getVertexBufferObjectManager());
         tiledMap = tmxLoader.loadFromAsset(MAP_FILE);
 
+        TMXLayer metaLayer = getLayer("Meta");
+        metaLayer.setVisible(false);
+
         backgroundTiles = readBackgroundTiles();
         collidableTileID = readCollidableTileID();
     }
