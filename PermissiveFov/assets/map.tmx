@@ -92,7 +92,7 @@
   <image source="gfx/Tiles/Meta_tiles.png" width="67" height="34"/>
   <tile id="0">
    <properties>
-    <property name="Collidable" value="true"/>
+    <property name="Collidable" value=""/>
    </properties>
   </tile>
  </tileset>
